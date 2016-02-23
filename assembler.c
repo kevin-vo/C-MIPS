@@ -174,6 +174,7 @@ int pass_one(FILE* input, FILE* output, SymbolTable* symtbl) {
         int err = parse_args(input_line, args, pNum_args);
         if (err == -1) {
             ret_code = -1;
+            continue;
         }
 
     	// Checks to see if there were any errors when writing instructions
