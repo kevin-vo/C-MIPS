@@ -49,7 +49,30 @@
 #------------------------------------------------------------------------------
 addr_for_symbol:
 	# YOUR CODE HERE
+	beq $a0, $0, addr_not_found
+	addi $sp, $sp, -12
+	sw $ra, 0($sp)
+	sw $a0, 4($sp)
+	sw $a1, 8($sp)
+
+	lw $a0, 4($a0)
+	jal streq
+	beq $v0, $zero, addr_found
+	lw $ra, 0($sp)
+	lw $a0, 4($sp)
+	lw $a1, 8($sp)
+	addi $sp, $sp, 12
+	lw $a0, 8($a0)
+	j addr_for_symbol
+addr_found:
+	lw $ra, 0($sp)
+	lw $a0, 4($sp)
+	addi $sp, $sp, 12
+	lw $v0, 0($a0)
 	jr $ra
+addr_not_found:
+	addi $v0, $zero, -1
+	jr $ra	
 	
 ###############################################################################
 #                 DO NOT MODIFY ANYTHING BELOW THIS POINT                       

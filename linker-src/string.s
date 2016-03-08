@@ -28,6 +28,17 @@ tab:	.asciiz "\t"
 #------------------------------------------------------------------------------
 strlen:
 	# YOUR CODE HERE
+	add $t0, $zero, $zero #counter for length of word
+	lbu $t1, 0($a0) #current char
+	j strlen_loop
+strlen_loop:
+	beq $t1, $zero, strlen_done
+	addi $t0, $t0, 1 #increment length of word
+	addiu $a0, $a0, 1 #increment char pointer
+	lbu $t1, 0($a0) #new char
+	j strlen_loop
+strlen_done:
+	add $v0, $t0, $0
 	jr $ra
 
 #------------------------------------------------------------------------------
@@ -42,6 +53,17 @@ strlen:
 #------------------------------------------------------------------------------
 strncpy:
 	# YOUR CODE HERE
+	add $t0, $zero, $zero #index for strings. Will be incremented.
+strncpy_loop:
+	beq $t0, $a2, strncpy_done
+	add $t2, $a1, $t0 #address offset for source string using index
+	lbu $t1, 0($t2) #copies char from source string
+	add $t2, $a0, $t0 #address offset for destination string using index
+	sb $t1, 0($t2) #transfers char to destination
+	addiu $t0, $t0, 1 #increments index
+	j strncpy_loop
+strncpy_done:
+	add $v0, $a0, $0
 	jr $ra
 
 #------------------------------------------------------------------------------
@@ -58,7 +80,28 @@ strncpy:
 #------------------------------------------------------------------------------
 copy_of_str:
 	# YOUR CODE HERE
+	addi $sp, $sp, -8
+	sw $ra, 0($sp)
+	sw $a0, 4($sp) #saves destination
+	
+	jal strlen #$v0 = length of source string
+	add $t0, $v0, $zero #holds length value for strncpy later
+	add $a0, $v0, $zero #preps $a0 for syscall
+	addi $v0, $zero, 9 #preps syscall for sbrk
+	syscall #$v0 = address of allocated memory. Aka the new string destination.
+	
+	add $t1, $v0, $zero #$t1 = destination string. All arguments prepped for strncpy
+	
+	lw $a0, 4($sp)
+	addiu $a1, $a0, 0
+	addiu $a0, $t1, 0
+	addiu $a2, $t0, 0
+	
+	jal strncpy
+	lw $ra, 0($sp)
+	addi $sp, $sp, 8
 	jr $ra
+
 
 ###############################################################################
 #                 DO NOT MODIFY ANYTHING BELOW THIS POINT                       

@@ -25,7 +25,7 @@ test_str4:		.asciiz ""
 main:
 	print_str(test_header_name)
 	
-	#print_newline()
+	print_newline()
 	#jal test_streq
 
 	print_newline()
